@@ -1,12 +1,9 @@
-/* eslint-disable import/no-unresolved */
 import Badge from "../Atom/Badge";
 import Header from "../Atom/Header";
 import Paragraph from "../Atom/Paragraph";
-/* eslint-disable react/prop-types */
 import React from "react";
 
 const Card = ({ header = "", description = "", active = "", landing = "" }) => {
-  console.log(active);
   return (
     <div className="flex w-full items-center justify-between space-x-6 p-6">
       <div className="flex-1 truncate">

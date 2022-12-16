@@ -1,14 +1,8 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/prop-types */
 import Card from "../Molecules/Card";
-/* eslint-disable import/no-unresolved */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable react/react-in-jsx-scope */
 import React from "react";
 import moment from "moment";
 
 const SpaceXGridComponent = ({ data = [] }) => {
-  console.log(data);
   return (
     <ul
       role="list"

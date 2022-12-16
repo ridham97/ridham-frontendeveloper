@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 
 const Badge = ({ title = "", color = "bg-green-100 text-green-800" }) => {
