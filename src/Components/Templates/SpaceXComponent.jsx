@@ -1,32 +1,29 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-const sortOptions = [
-  { name: "Active", href: "#", current: true },
-  { name: "Retired", href: "#", current: false },
-  { name: "Destroyed", href: "#", current: false },
-  { name: "Unknown", href: "#", current: false },
-];
+import { useCallback, useEffect, useState } from "react";
 
-import { useEffect, useState } from "react";
-
-import { Disclosure } from "@headlessui/react";
 import Header from "../Organisms/Header";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "../Atom/Loader";
-import Menu from "../Atom/Menu";
 import Search from "../Atom/Search";
 import SpaceXGridComponent from "../Organisms/SpaceXGridComponent";
 import { getSpaceData } from "../../API/capsule";
 
 export default function SpaceXComponent() {
+  const [searchValue, setSearchValue] = useState("");
   const [pageSize, setPageSize] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [data, setData] = useState([]);
+  const [filterData, setFilterData] = useState([]);
+
   useEffect(() => {
     getSpaceData(6, 0)
       .then((res) => res.json())
-      .then((res) => setData(res));
+      .then((res) => {
+        setData(res);
+        setFilterData(res);
+      });
   }, []);
 
   const fetchMoreData = () => {
@@ -34,12 +31,29 @@ export default function SpaceXComponent() {
     getSpaceData(6, pageSize)
       .then((res) => res.json())
       .then((res) => {
-        if (res.length <= 0) {
+        if (res.length <= 1) {
           setHasMoreData(false);
         }
         setData((prev) => [...prev, ...res]);
       });
   };
+
+  useEffect(() => {
+    if (searchValue === "") {
+      setData(filterData);
+    } else {
+      const temp = data.filter(
+        (l) =>
+          l.status.toLowerCase().includes(searchValue) ||
+          l.type.toLowerCase().includes(searchValue)
+      );
+      setData(temp);
+    }
+  }, [searchValue]);
+
+  const searchHandlerFtn = useCallback((e) => {
+    setSearchValue(e.target.value);
+  }, []);
 
   return (
     <div className="bg-white">
@@ -49,38 +63,21 @@ export default function SpaceXComponent() {
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mt-5">
-          <Search labelName="Search by status and type" />
+          <Search
+            value={searchValue}
+            onChange={searchHandlerFtn}
+            labelName="Search by status and type"
+          />
         </div>
-        <Disclosure
-          as="section"
-          aria-labelledby="filter-heading"
-          className="grid items-center  border-b mb-3 border-gray-200"
-        >
-          <h2 id="filter-heading" className="sr-only">
-            Filters
-          </h2>
-          <div className="relative col-start-1 row-start-1 py-4">
-            <div className="mx-auto flex max-w-7xl space-x-6 divide-x divide-gray-200 px-4 text-sm sm:px-6 lg:px-8">
-              <div className="pl-6">
-                <button type="button" className="text-gray-500">
-                  Clear all
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-start-1 row-start-1 py-4">
-            <div className="mx-auto flex max-w-7xl justify-end px-4 sm:px-6 lg:px-8">
-              <Menu name="Status" options={sortOptions} />
-            </div>
-          </div>
-        </Disclosure>
         <InfiniteScroll
           dataLength={data.length}
           next={fetchMoreData}
           hasMore={hasMoreData}
           loader={<Loader />}
         >
-          <SpaceXGridComponent data={data} />
+          <div className="mb-24">
+            <SpaceXGridComponent data={data} />
+          </div>
         </InfiniteScroll>
       </div>
     </div>

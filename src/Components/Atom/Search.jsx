@@ -1,4 +1,8 @@
-export default function Search({ labelName = "" }) {
+export default function Search({
+  labelName = "",
+  onChange = () => {},
+  value = "",
+}) {
   return (
     <div>
       <label
@@ -12,7 +16,9 @@ export default function Search({ labelName = "" }) {
           type="text"
           name="search"
           id="search"
+          value={value}
           className="block w-full rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          onChange={onChange}
         />
       </div>
     </div>
